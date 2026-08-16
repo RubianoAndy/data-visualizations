@@ -1,0 +1,11 @@
+cliente_id,sector,consumo_kwh,costo_miles_cop,tarifa_cop_kwh
+CL-045,Industrial,3777.1,2507.0,663.7
+CL-110,Industrial,3626.1,2375.6,655.1
+CL-073,Industrial,3534.2,2368.4,670.1
+CL-006,Industrial,3315.5,1997.4,602.4
+CL-100,Industrial,3302.4,2139.9,648.0
+CL-116,Industrial,3223.5,2130.2,660.8
+CL-023,Industrial,2748.6,1742.4,633.9
+CL-083,Industrial,2702.5,1783.8,660.1
+CL-019,Industrial,2688.1,1750.3,651.1
+CL-104,Industrial,2645.5,1713.7,647.8

@@ -1,0 +1,7 @@
+herramienta,version,paradigma,motor_render,interactivo,loc,tiempo_ms,peso_kb,observacion,ecosistema
+Matplotlib,3.11.1,Imperativa (orientada a objetos),Agg / propio,No (imagen estática),10,73.7,29.5,Control absoluto de cada artista; es el motor sobre el que corren las demás,Python
+pandas.plot,3.0.5,Imperativa (método del DataFrame),Matplotlib,No (imagen estática),9,78.0,29.2,"Atajo para explorar: grafica directo desde el DataFrame, hereda sus límites",Python
+seaborn,0.13.2,Declarativa (gramática estadística),Matplotlib,No (imagen estática),9,82.2,27.0,Agrega y estiliza por ti; ideal para gráficos estadísticos frecuentes,Python
+Plotly,6.9.0,Declarativa (Plotly Express),JavaScript (D3) / Kaleido,"Sí (zoom, tooltip, HTML)",6,1589.6,25.9,Pensado para la web; exportar a imagen exige un motor externo (Kaleido),Python
+R base (graphics),4.6.1,Imperativa (dibujo por pasos),grDevices / Cairo,No (imagen estatica),7,12.0,10.5,Viene con R; sintaxis breve pero cada detalle se ajusta a mano,R
+ggplot2,4.0.3,Declarativa (gramatica de graficos),grid / Cairo,No (imagen estatica),12,146.0,10.1,Capas componibles y estilo consistente; es el estandar en R,R

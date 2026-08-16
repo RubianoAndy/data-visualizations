@@ -1,0 +1,5 @@
+columna,tipo,no_nulos,nulos,valores_unicos
+cliente_id,str,120,0,120
+sector,str,120,0,3
+consumo_kwh,float64,120,0,119
+costo_miles_cop,float64,120,0,118

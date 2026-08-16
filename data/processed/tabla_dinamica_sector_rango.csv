@@ -1,0 +1,5 @@
+rango_consumo,Residencial,Comercial,Industrial,Total
+Bajo (<500),62,2,0,64
+Medio (500-1000),0,28,0,28
+Alto (1000-2000),0,10,5,15
+Muy alto (>2000),0,0,13,13

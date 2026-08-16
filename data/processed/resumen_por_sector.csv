@@ -1,0 +1,4 @@
+sector,clientes,consumo_medio,consumo_mediana,consumo_total,costo_medio,tarifa_media,pct_clientes,pct_consumo
+Residencial,62,248.3,240.6,15396.4,203.7,821.8,51.7,15.7
+Comercial,40,878.1,866.6,35125.3,623.4,710.4,33.3,35.7
+Industrial,18,2654.0,2666.8,47771.5,1716.1,645.0,15.0,48.6

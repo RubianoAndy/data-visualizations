@@ -1,13 +1,13 @@
-"""Actividad 2 - Análisis estadístico de datos y creación de gráficos básicos.
+"""Actividad 3 - Fase 2: estadística descriptiva y gráficos básicos.
 
-Genera (o regenera con la misma semilla de la Actividad 1) el dataset de
-consumo energético, construye la distribución de frecuencias por el método
-de Sturges, calcula las medidas de tendencia central (media, mediana, moda)
-y de dispersión (rango, varianza, desviación estándar, coeficiente de
-variación) y produce los gráficos básicos con Matplotlib.
+Lee el dataset producido por ``exploration.py``, construye la distribución
+de frecuencias por el método de Sturges, calcula las medidas de tendencia
+central (media, mediana, moda), las de dispersión (rango, varianza,
+desviación estándar, coeficiente de variación) y las de forma (asimetría y
+curtosis), y traduce cada tabla en su gráfico básico con Matplotlib.
 
 Rutas: el script se ubica en codes -> utils -> raíz del proyecto.
-Escribe el CSV en ``data/dataset``, las tablas estadísticas en
+Lee el CSV de ``data/dataset``, escribe las tablas estadísticas en
 ``data/processed`` y las imágenes en
 ``public/assets/images/figures/python/statistics/``.
 """
@@ -33,26 +33,16 @@ plt.rcParams.update({
     "axes.axisbelow": True,
 })
 
-"""Dataset: idéntico al de la Actividad 1 (semilla fija 42) para dar
-continuidad al análisis sobre las mismas 120 observaciones."""
-rng = np.random.default_rng(42)
-n = 120
-sectors = rng.choice(
-    ["Residencial", "Comercial", "Industrial"], size=n, p=[0.5, 0.3, 0.2]
-)
-base = {"Residencial": 250, "Comercial": 900, "Industrial": 2500}
-spread = {"Residencial": 60, "Comercial": 220, "Industrial": 600}
-consumption = np.array([rng.normal(base[s], spread[s]) for s in sectors]).clip(50)
-tariff = {"Residencial": 820, "Comercial": 710, "Industrial": 640}
-cost = consumption * np.array([tariff[s] for s in sectors]) * rng.normal(1, 0.04, n) / 1000
-
-df = pd.DataFrame({
-    "cliente_id": [f"CL-{i:03d}" for i in range(1, n + 1)],
-    "sector": sectors,
-    "consumo_kwh": consumption.round(1),
-    "costo_miles_cop": cost.round(1),
-})
-df.to_csv(DATA_DIR / "consumo_energia.csv", index=False)
+"""Dataset: el mismo archivo que produjo la Fase 1 (semilla fija 42), para
+dar continuidad al análisis sobre las mismas 120 observaciones."""
+dataset_path = DATA_DIR / "consumo_energia.csv"
+if not dataset_path.exists():
+    raise SystemExit(
+        f"No se encontró {dataset_path}. Ejecuta antes la Fase 1: "
+        "python utils/codes/exploration.py"
+    )
+df = pd.read_csv(dataset_path)
+n = len(df)
 
 """1. DISTRIBUCIÓN DE FRECUENCIAS (regla de Sturges).
 
@@ -116,10 +106,13 @@ print("\nMedidas de tendencia central del consumo (kWh)")
 print(central.to_string(index=False))
 print(f"Moda del sector (variable nominal): {df['sector'].mode()[0]}")
 
-"""3. MEDIDAS DE DISPERSIÓN.
+"""3. MEDIDAS DE DISPERSIÓN Y DE FORMA.
 
 Varianza y desviación estándar muestrales (ddof=1), rango, coeficiente de
-variación y rango intercuartílico, por sector y a nivel global.
+variación y rango intercuartílico, por sector y a nivel global. Se añaden
+los dos estadísticos de forma que cuantifican lo que el histograma muestra:
+la asimetría (sesgo > 0 indica cola derecha) y la curtosis de Fisher
+(exceso sobre la normal, para la que vale 0).
 """
 dispersion_rows = []
 for label in ["Residencial", "Comercial", "Industrial", "Global"]:
@@ -134,10 +127,12 @@ for label in ["Residencial", "Comercial", "Industrial", "Global"]:
         "q1": round(q1, 1),
         "q3": round(q3, 1),
         "iqr": round(q3 - q1, 1),
+        "asimetria": round(subset.skew(), 2),
+        "curtosis": round(subset.kurt(), 2),
     })
 dispersion = pd.DataFrame(dispersion_rows)
 dispersion.to_csv(PROCESSED_DIR / "dispersion.csv", index=False)
-print("\nMedidas de dispersión del consumo (kWh)")
+print("\nMedidas de dispersión y forma del consumo (kWh)")
 print(dispersion.to_string(index=False))
 
 """4. GRÁFICOS BÁSICOS.

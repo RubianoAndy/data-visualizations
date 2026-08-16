@@ -1,6 +1,6 @@
-#' Actividad 2 - Verificacion cruzada en R del analisis estadistico.
+#' Actividad 3 - Fase 4: verificacion cruzada en R del analisis estadistico.
 #'
-#' Lee el CSV generado por statistics.py, recalcula de forma independiente la
+#' Lee el CSV generado por exploration.py, recalcula de forma independiente la
 #' distribucion de frecuencias (Sturges), las medidas de tendencia central
 #' (media, mediana, moda por clase modal interpolada) y de dispersion (rango,
 #' varianza, desviacion estandar, coeficiente de variacion), y replica los

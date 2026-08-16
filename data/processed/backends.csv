@@ -1,0 +1,4 @@
+formato,backend,tipo,tiempo_ms,peso_kb
+PNG,Agg (Anti-Grain Geometry),Rasterizado a 150 ppp,34.0,26.2
+SVG,SVG,"Vectorial, texto editable",24.3,36.7
+PDF,PDF,"Vectorial, listo para imprimir",35.8,19.2
