@@ -1,8 +1,9 @@
-#' Actividad 3 - Fase 5: comparacion de herramientas de visualizacion en R.
+#' Actividad 3 - Fase 4: comparacion de herramientas de visualizacion en R.
 #'
-#' Replica el mismo grafico que la comparacion en Python -consumo medio por sector, con
-#' titulo, ejes rotulados y etiquetas de dato- con las dos herramientas
-#' dominantes en R: la graficacion base y ggplot2. Se miden los mismos tres
+#' Replica el mismo grafico que la comparacion en Python -consumo medio por
+#' sector, con titulo, ejes rotulados, cuadricula sutil en el eje de magnitudes
+#' y etiquetas de dato- con las dos herramientas dominantes en R: la
+#' graficacion base y ggplot2. Se miden los mismos tres
 #' indicadores (lineas de codigo efectivas, tiempo mediano de renderizado y
 #' peso del PNG) y ambas escriben con el MISMO dispositivo png(type="cairo")
 #' y el mismo tamano, para que la diferencia sea atribuible a la libreria.
@@ -43,13 +44,19 @@ eje_y <- "Consumo (kWh/mes)"
 #' Cada funcion se escribe con el estilo idiomatico de su libreria: base
 #' dibuja por pasos sobre un dispositivo abierto, ggplot2 declara el grafico
 #' como una suma de capas y lo imprime al final.
+#'
+#' La cuadricula forma parte de la especificacion comun. En R base cuesta una
+#' pasada extra -dibujar el marco sin relleno, insertar la cuadricula y repetir
+#' las barras encima- porque no existe una nocion de "dibujar detras"; ggplot2
+#' la trae en su tema y solo hay que restringirla al eje de magnitudes.
 
 render_base <- function(salida) {
   png(salida, width = 975, height = 555, res = 150, type = "cairo")
   par(mar = c(4, 4.5, 3, 1))
-  pos <- barplot(medias, col = paleta, border = "white",
-                 ylim = c(0, max(medias) * 1.18),
+  pos <- barplot(medias, col = NA, border = NA, ylim = c(0, max(medias) * 1.18),
                  main = paste(titulo, "(R base)"), xlab = eje_x, ylab = eje_y)
+  grid(nx = NA, ny = NULL, col = "#cccccc", lty = 1)
+  barplot(medias, col = paleta, border = "white", add = TRUE, axes = FALSE)
   text(pos, medias + max(medias) * 0.04, labels = sprintf("%.0f", medias), cex = 0.8)
   dev.off()
 }
@@ -64,7 +71,8 @@ render_ggplot <- function(salida) {
     expand_limits(y = max(medias) * 1.18) +
     labs(title = paste(titulo, "(ggplot2)"), x = eje_x, y = eje_y) +
     theme_minimal(base_size = 10) +
-    theme(legend.position = "none", plot.title = element_text(face = "bold"))
+    theme(legend.position = "none", plot.title = element_text(face = "bold"),
+          panel.grid.major.x = element_blank(), panel.grid.minor = element_blank())
   print(p)
   dev.off()
 }

@@ -1,8 +1,8 @@
-"""Actividad 3 - Fase 6: comparación de herramientas de visualización.
+"""Actividad 3 - Fase 5: comparación de herramientas de visualización.
 
 Construye EL MISMO gráfico -consumo medio por sector, con título, ejes
-rotulados y etiquetas de dato- en cuatro herramientas del ecosistema
-Python, y mide sobre esa base común tres indicadores objetivos:
+rotulados, cuadrícula sutil y etiquetas de dato- en cuatro herramientas del
+ecosistema Python, y mide sobre esa base común tres indicadores objetivos:
 
 * líneas de código efectivas necesarias para producirlo,
 * tiempo mediano de renderizado (5 repeticiones tras un calentamiento),
@@ -41,7 +41,8 @@ for d in (PROCESSED_DIR, FIGURES_DIR):
 matplotlib.use("Agg")   # backend no interactivo: mide el render, no la ventana
 plt.rcParams.update({
     "figure.dpi": 150, "font.size": 10, "axes.titlesize": 11,
-    "axes.titleweight": "bold", "axes.grid": True, "grid.alpha": 0.3,
+    "axes.titleweight": "bold", "axes.grid": True, "axes.grid.axis": "y",
+    "grid.alpha": 0.3, "grid.linestyle": "-", "grid.linewidth": 0.6,
     "axes.axisbelow": True,
 })
 
@@ -66,6 +67,13 @@ medias = df.groupby("sector", observed=True)["consumo_kwh"].mean().round(1)
 Cada función recibe la ruta de salida y escribe el PNG. Se escriben con el
 estilo idiomático de su librería: reescribirlas todas al estilo de
 Matplotlib falsearía la comparación de líneas de código.
+
+La especificación gráfica es idéntica en las cuatro -mismo título, ejes
+rotulados, paleta, etiquetas de dato, tamaño y cuadrícula sutil sobre el eje
+de magnitudes-, de modo que la diferencia medida sea atribuible a la
+herramienta. Las tres primeras heredan la cuadrícula de los rcParams
+(capa de estilo de Matplotlib); Plotly, que no pasa por Matplotlib, la
+declara en su propio layout.
 """
 
 
@@ -111,7 +119,8 @@ def con_plotly(salida: Path) -> None:
                  color=medias.index, color_discrete_sequence=PALETA,
                  title=f"{TITULO} (Plotly)",
                  labels={"x": EJE_X, "y": EJE_Y, "color": EJE_X})
-    fig.update_layout(showlegend=False, template="simple_white")
+    fig.update_layout(showlegend=False, template="simple_white",
+                      yaxis=dict(showgrid=True, gridcolor="#cccccc", gridwidth=1))
     fig.write_image(salida, width=ANCHO_PX, height=ALTO_PX)
 
 
@@ -177,7 +186,8 @@ fig_html = px.bar(x=medias.index, y=medias.values, text_auto=".0f",
                   color=medias.index, color_discrete_sequence=PALETA,
                   title=f"{TITULO} (Plotly, versión interactiva)",
                   labels={"x": EJE_X, "y": EJE_Y, "color": EJE_X})
-fig_html.update_layout(showlegend=False, template="simple_white")
+fig_html.update_layout(showlegend=False, template="simple_white",
+                       yaxis=dict(showgrid=True, gridcolor="#cccccc", gridwidth=1))
 fig_html.write_html(FIGURES_DIR / "bar_plotly_interactivo.html", include_plotlyjs="cdn")
 
 """3. RESUMEN VISUAL DE LA COMPARACIÓN.
@@ -187,9 +197,15 @@ Matplotlib -la herramienta que el laboratorio justifica como elección- de
 modo que la figura que resume la comparación es también un argumento a su
 favor.
 """
-orden_loc = comparativa.sort_values("loc")
-orden_t = comparativa.sort_values("tiempo_ms")
+# Orden descendente: en barras horizontales el primer elemento queda abajo,
+# de modo que el mejor valor (el menor) termina arriba, donde se lee primero.
+orden_loc = comparativa.sort_values("loc", ascending=False)
+orden_t = comparativa.sort_values("tiempo_ms", ascending=False)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.4, 3.6))
+for eje in (ax1, ax2):
+    # Barras horizontales: la magnitud se lee en X, así que la cuadrícula va en X.
+    eje.grid(axis="x")
+    eje.grid(axis="y", visible=False)
 b1 = ax1.barh(orden_loc["herramienta"], orden_loc["loc"], color=PALETA[1])
 ax1.bar_label(b1, padding=3, fontsize=8)
 ax1.set_xlim(0, orden_loc["loc"].max() * 1.25)
@@ -208,7 +224,7 @@ plt.close(fig)
 
 """4. CONSOLIDADO PYTHON + R.
 
-Si la Fase 5 (benchmark.R) ya corrió, sus dos filas se unen a las cuatro de
+Si la Fase 4 (benchmark.R) ya corrió, sus dos filas se unen a las cuatro de
 Python para cerrar el cuadro completo de seis herramientas. Los tiempos
 entre lenguajes son indicativos: cada uno mide su propio entorno de
 ejecución, no un mismo motor.
@@ -229,18 +245,21 @@ else:
         (ax1, "loc", "Líneas de código para el mismo gráfico", "%.0f"),
         (ax2, "tiempo_ms", "Tiempo de renderizado por figura", "%.0f ms"),
     ]:
-        datos = todas.sort_values(columna)
+        datos = todas.sort_values(columna, ascending=False)
         barras = eje.barh(datos["herramienta"], datos[columna],
                           color=[colores[e] for e in datos["ecosistema"]])
         eje.bar_label(barras, fmt=formato, padding=3, fontsize=8)
         eje.set_xlim(0, datos[columna].max() * 1.32)
         eje.set_title(titulo)
+        eje.grid(axis="x")
+        eje.grid(axis="y", visible=False)
     ax1.set_xlabel("Líneas efectivas (menos es mejor)")
     ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax2.set_xlabel("Milisegundos (menos es mejor)")
     manijas = [plt.Rectangle((0, 0), 1, 1, color=c) for c in colores.values()]
+    # Arriba a la derecha: es la zona libre una vez ordenadas las barras.
     ax1.legend(manijas, colores.keys(), title="Ecosistema", fontsize=8,
-               title_fontsize=8, loc="lower right")
+               title_fontsize=8, loc="upper right")
     fig.suptitle("Seis herramientas, un mismo gráfico: brevedad frente a velocidad",
                  fontsize=11, fontweight="bold")
     fig.tight_layout()

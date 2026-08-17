@@ -1,3 +1,3 @@
 "herramienta","version","paradigma","motor_render","interactivo","loc","tiempo_ms","peso_kb","observacion"
-"R base (graphics)","4.6.1","Imperativa (dibujo por pasos)","grDevices / Cairo","No (imagen estatica)",7,12,10.5,"Viene con R; sintaxis breve pero cada detalle se ajusta a mano"
-"ggplot2","4.0.3","Declarativa (gramatica de graficos)","grid / Cairo","No (imagen estatica)",12,146,10.1,"Capas componibles y estilo consistente; es el estandar en R"
+"R base (graphics)","4.6.1","Imperativa (dibujo por pasos)","grDevices / Cairo","No (imagen estatica)",8,12.4,11.1,"Viene con R; sintaxis breve pero cada detalle se ajusta a mano"
+"ggplot2","4.0.3","Declarativa (gramatica de graficos)","grid / Cairo","No (imagen estatica)",13,153.2,8.8,"Capas componibles y estilo consistente; es el estandar en R"

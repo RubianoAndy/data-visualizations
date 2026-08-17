@@ -27,9 +27,15 @@ FIGURES_DIR = (
 for d in (DATA_DIR, PROCESSED_DIR, FIGURES_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
+"""Estilo común de todas las figuras (principios de visualización de la
+sección de metodología): cuadrícula sutil sobre el eje de magnitudes,
+dibujada SIEMPRE detrás de los datos (``axes.axisbelow``), y título en
+negrita. Sobre el eje categórico la cuadrícula se omite porque no hay
+valores intermedios que leer."""
 plt.rcParams.update({
     "figure.dpi": 150, "font.size": 10, "axes.titlesize": 11,
-    "axes.titleweight": "bold", "axes.grid": True, "grid.alpha": 0.3,
+    "axes.titleweight": "bold", "axes.grid": True, "axes.grid.axis": "y",
+    "grid.alpha": 0.3, "grid.linestyle": "-", "grid.linewidth": 0.6,
     "axes.axisbelow": True,
 })
 
@@ -167,6 +173,9 @@ plt.close(fig)
 tabla, la puntual (marcas de clase vs fi) y la acumulada (límites
 superiores vs Hi %)."""
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.0, 3.4))
+for eje in (ax1, ax2):
+    # Aquí el eje X sí es continuo, así que la cuadrícula ayuda en ambos ejes.
+    eje.grid(axis="both")
 poly_x = np.concatenate(([edges[0]], freq_table["marca_clase"], [edges[-1]]))
 poly_y = np.concatenate(([0], freq_table["fi"], [0]))
 ax1.plot(poly_x, poly_y, marker="o", color="#2b8cbe")
