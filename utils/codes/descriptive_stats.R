@@ -126,7 +126,7 @@ cat("Moda del sector (variable nominal):",
 #' la cuadricula se inserta detras y la segunda pasada dibuja las barras encima.
 png(file.path(figures_dir, "hist_sturges_central_tendency.png"),
     width = 1950, height = 1140, res = 300, type = "cairo")
-par(mar = c(4, 4, 3, 1))
+par(mar = c(4, 4.5, 3, 1), las = 1)
 hist(x, breaks = edges, border = NA, col = NA, include.lowest = TRUE,
      main = sprintf("Distribución de frecuencias del consumo (R, %d clases)", k),
      xlab = "Consumo (kWh/mes)", ylab = "Frecuencia absoluta (clientes)")
@@ -146,8 +146,8 @@ dev.off()
 #' superpuestas, tambien en dos pasadas.
 png(file.path(figures_dir, "boxplot_dispersion_by_sector.png"),
     width = 1950, height = 1140, res = 300, type = "cairo")
-par(mar = c(4, 4, 3, 1))
-boxplot(consumo_kwh ~ sector, data = df, border = NA, ylim = c(0, max(x) * 1.12),
+par(mar = c(4, 4.5, 3, 1), las = 1)
+boxplot(consumo_kwh ~ sector, data = df, border = NA, ylim = c(0, max(x) * 1.15),
         main = "Dispersión del consumo por sector (R)",
         xlab = "Sector", ylab = "Consumo (kWh/mes)")
 grid(nx = NA, ny = NULL, col = "#cccccc", lty = 1)

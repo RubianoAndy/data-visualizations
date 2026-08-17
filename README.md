@@ -27,19 +27,18 @@
 
 Laboratorio de **estadística descriptiva y visualización comparada** sobre un conjunto de datos simulado de consumo energético mensual de **120 clientes** de una empresa distribuidora (sectores Residencial, Comercial e Industrial). La semilla fija `default_rng(42)` reproduce exactamente las mismas 120 observaciones de las actividades anteriores, de modo que el foco puede ponerse en lo que esta actividad añade y no en volver a describir los datos.
 
-El proyecto responde a tres preguntas encadenadas:
+El proyecto responde a dos preguntas encadenadas:
 
-1. **¿Qué dicen los datos?** Exploración y manipulación con **pandas** (perfilado, variables derivadas, `groupby`, `pivot_table`) y estadística descriptiva completa: distribución de frecuencias por la **regla de Sturges**, medidas de **tendencia central**, de **dispersión** y de **forma**.
-2. **¿Cómo se dibujan?** Historia y **arquitectura en tres capas de Matplotlib** —backend, artistas y scripting—, documentada con figuras construidas por la propia librería, incluido un diagrama hecho solo con objetos `Artist`.
-3. **¿Con qué herramienta conviene dibujarlos?** Comparación medida de **seis herramientas** (Matplotlib, pandas.plot, seaborn, Plotly, R base y ggplot2) construyendo *el mismo gráfico* en todas y midiendo líneas de código, tiempo de renderizado y peso del archivo.
+1. **¿Qué dicen los datos?** Exploración y manipulación con **pandas** (perfilado, variables derivadas, `groupby`, `pivot_table`) y estadística descriptiva completa: distribución de frecuencias por la **regla de Sturges**, medidas de **tendencia central**, de **dispersión** y de **forma**, cada una traducida a su gráfico correspondiente.
+2. **¿Con qué herramienta conviene dibujarlos?** Comparación medida de **seis herramientas** (Matplotlib, pandas.plot, seaborn, Plotly, R base y ggplot2) construyendo *el mismo gráfico* en todas y midiendo líneas de código, tiempo de renderizado y peso del archivo.
 
-Todo el análisis estadístico se **verifica de forma cruzada en R**, que recalcula cada cifra de manera independiente y replica las figuras.
+Todo el análisis estadístico se **verifica de forma cruzada en R**, que recalcula cada cifra de manera independiente.
 
 ### Objetivos Principales
 
 - Explorar y manipular el conjunto de datos con pandas antes de graficarlo.
 - Construir la distribución de frecuencias e interpretar las medidas de tendencia central, dispersión y forma.
-- Explicar la arquitectura de Matplotlib y la anatomía de una figura, y usarlas para etiquetar correctamente cada gráfico.
+- Aplicar los principios de visualización a todas las figuras: título informativo, ejes con unidad, escala desde cero, cuadrícula sutil detrás de los datos, color funcional y etiquetas de dato.
 - Comparar herramientas de visualización con indicadores medidos y justificar, con esa evidencia, la elección de Matplotlib para este laboratorio.
 - Validar todo el cálculo mediante una implementación independiente en R.
 
@@ -63,7 +62,6 @@ Todo el análisis estadístico se **verifica de forma cruzada en R**, que recalc
 │       ├── freq_table.csv                        # Distribución de frecuencias: fi, Fi, hi %, Hi %
 │       ├── central_tendency.csv                  # Media, mediana y moda interpolada
 │       ├── dispersion.csv                        # Rango, varianza, σ, CV, IQR, asimetría, curtosis
-│       ├── backends.csv                          # Costo de exportar a PNG, SVG y PDF
 │       ├── comparativa_herramientas.csv          # Cuatro herramientas de Python medidas
 │       ├── comparativa_herramientas_r.csv        # R base y ggplot2 medidos
 │       └── comparativa_consolidada.csv           # Las seis herramientas en una sola tabla
@@ -75,42 +73,39 @@ Todo el análisis estadístico se **verifica de forma cruzada en R**, que recalc
 │           └── figures/
 │               ├── python/
 │               │   ├── statistics/               # 5 figuras estadísticas (Matplotlib)
-│               │   ├── architecture/             # 4 figuras de arquitectura + demos de backend
 │               │   └── tools/                    # 4 gráficos comparados + 2 resúmenes + HTML interactivo
 │               └── r/
-│                   ├── statistics/               # 5 réplicas en R base
+│                   ├── statistics/               # 2 réplicas en R base
 │                   └── tools/                    # R base y ggplot2 sobre el mismo gráfico
 └── utils/
     └── codes/
         ├── exploration.py                        # Fase 1 · dataset y exploración con pandas
         ├── descriptive_stats.py                  # Fase 2 · estadística descriptiva y figuras
-        ├── architecture.py                       # Fase 3 · arquitectura de Matplotlib
-        ├── descriptive_stats.R                   # Fase 4 · verificación cruzada en R
-        ├── benchmark.R                           # Fase 5 · R base frente a ggplot2
-        └── benchmark.py                          # Fase 6 · comparación de herramientas y consolidado
+        ├── descriptive_stats.R                   # Fase 3 · verificación cruzada en R
+        ├── benchmark.R                           # Fase 4 · R base frente a ggplot2
+        └── benchmark.py                          # Fase 5 · comparación de herramientas y consolidado
 ```
 
 ---
 
 ## 🧪 Pipeline del Laboratorio
 
-El flujo es **secuencial**: la Fase 1 crea el dataset que consumen todas las demás, y la Fase 6 cierra el circuito uniendo sus mediciones con las de R.
+El flujo es **secuencial**: la Fase 1 crea el dataset que consumen todas las demás, y la Fase 5 cierra el circuito uniendo sus mediciones con las de R.
 
 | Fase | Script | Qué produce |
 |---|---|---|
 | 1 | [`exploration.py`](utils/codes/exploration.py) | Dataset y cuatro tablas de exploración con pandas |
 | 2 | [`descriptive_stats.py`](utils/codes/descriptive_stats.py) | Frecuencias, tendencia central, dispersión y 5 figuras |
-| 3 | [`architecture.py`](utils/codes/architecture.py) | 4 figuras sobre Matplotlib y la medición de backends |
-| 4 | [`descriptive_stats.R`](utils/codes/descriptive_stats.R) | Recálculo independiente en R y 5 réplicas gráficas |
-| 5 | [`benchmark.R`](utils/codes/benchmark.R) | Medición de R base y ggplot2 |
-| 6 | [`benchmark.py`](utils/codes/benchmark.py) | Medición de las 4 herramientas de Python y consolidado de las 6 |
+| 3 | [`descriptive_stats.R`](utils/codes/descriptive_stats.R) | Recálculo independiente en R y 2 réplicas gráficas |
+| 4 | [`benchmark.R`](utils/codes/benchmark.R) | Medición de R base y ggplot2 |
+| 5 | [`benchmark.py`](utils/codes/benchmark.py) | Medición de las 4 herramientas de Python y consolidado de las 6 |
 
 **Características clave:**
 
 - **Reproducibilidad:** semilla fija (`default_rng(42)`); cualquier ejecución produce las mismas 120 observaciones y las mismas tablas.
-- **Comparación honesta:** las seis implementaciones dibujan la *misma* especificación gráfica (título, ejes rotulados, etiquetas de dato, misma paleta y mismo tamaño en píxeles) y se cronometran con una pasada de calentamiento más cinco medidas, de las que se reporta la mediana.
+- **Comparación honesta:** las seis implementaciones dibujan la *misma* especificación gráfica —título, ejes rotulados, etiquetas de dato, misma paleta, cuadrícula sutil sobre el eje de magnitudes y mismo tamaño en píxeles— y se cronometran con una pasada de calentamiento más cinco medidas, de las que se reporta la mediana.
 - **Estilo idiomático:** cada herramienta se escribe como su comunidad la escribe. Redactarlas todas al estilo de Matplotlib habría falseado el conteo de líneas de código.
-- **Verificación cruzada:** R recalcula las ocho clases de Sturges, la moda interpolada y todos los estadísticos, y coincide **dígito a dígito** con las tablas de Python.
+- **Verificación cruzada:** R recalcula las ocho clases de Sturges, la moda interpolada y todos los estadísticos —incluidas asimetría y curtosis con la misma corrección muestral— y coincide **dígito a dígito** con las tablas de Python.
 - **Rutas:** Python resuelve las suyas desde la ubicación del script (`Path(__file__)`); R usa rutas relativas a la raíz del proyecto, así que debe ejecutarse desde ahí.
 
 ---
@@ -135,7 +130,7 @@ El resto de entradas de [`requirements.txt`](requirements.txt) son dependencias 
 ### R
 
 - **R 4.x** (probado en 4.6.1), con **ggplot2 4.0.3** para la fase comparativa: `install.packages("ggplot2")`.
-- Los dispositivos PNG se abren con `type = "cairo"` para obtener texto antialiasado a 150 ppp.
+- Los dispositivos PNG se abren con `type = "cairo"` para obtener texto antialiasado.
 - Editor: RStudio Desktop o VS Code con la extensión **R** (REditorSupport) + `languageserver`.
 
 ---
@@ -150,16 +145,15 @@ py -3.14 -m venv venv           # o `python -m venv venv` si 3.14 ya es el inté
 source venv/Scripts/activate    # Git Bash (en PowerShell: venv\Scripts\activate)
 pip install -r requirements.txt
 
-# 2. Fases 1 a 3: datos, estadística y arquitectura
+# 2. Fases 1 y 2: datos y estadística descriptiva
 python utils/codes/exploration.py
 python utils/codes/descriptive_stats.py
-python utils/codes/architecture.py
 
-# 3. Fases 4 y 5: verificación cruzada y medición en R
+# 3. Fases 3 y 4: verificación cruzada y medición en R
 Rscript utils/codes/descriptive_stats.R
 Rscript utils/codes/benchmark.R
 
-# 4. Fase 6: comparación de herramientas y consolidado final
+# 4. Fase 5: comparación de herramientas y consolidado final
 python utils/codes/benchmark.py
 ```
 
@@ -169,7 +163,24 @@ Si `Rscript` no está en el `PATH` de Git Bash, añádelo a la sesión antes del
 export PATH="/c/Program Files/R/R-4.6.1/bin/x64:$PATH"
 ```
 
-> ℹ️ La Fase 6 debe ejecutarse **después** de la Fase 5: es la que une las mediciones de ambos lenguajes en `comparativa_consolidada.csv`. Si se corre antes, avisa por consola y genera solo el comparativo de Python.
+> ℹ️ La Fase 5 debe ejecutarse **después** de la Fase 4: es la que une las mediciones de ambos lenguajes en `comparativa_consolidada.csv`. Si se corre antes, avisa por consola y genera solo el comparativo de Python.
+
+---
+
+## 🎨 Principios de Visualización Aplicados
+
+Todas las figuras del laboratorio —las de Python, las de R y las seis de la comparación— cumplen la misma especificación, derivada de que el ojo compara posiciones y longitudes con mucha más precisión que áreas, ángulos o intensidades de color:
+
+| Principio | Cómo se aplica |
+|---|---|
+| **Título informativo** | Enuncia el hallazgo, no solo el nombre de la variable |
+| **Ejes rotulados con unidad** | La figura se entiende sin leer el texto que la acompaña |
+| **Escala desde cero** | La altura de cada barra es proporcional a la cantidad que representa |
+| **Cuadrícula sutil y detrás** | `axes.axisbelow`, α = 0,3 y solo sobre el eje de magnitudes: ayuda a leer valores sin competir con los datos |
+| **Color funcional** | Distingue categorías o resalta una medida; nunca decora |
+| **Etiquetas de dato** | Evitan al lector estimar valores a ojo |
+
+En las barras horizontales la cuadrícula se traslada al eje X y el orden se invierte, de modo que el mejor valor quede arriba, donde se lee primero.
 
 ---
 
@@ -196,37 +207,6 @@ El sector Industrial es **15 % de los clientes y casi la mitad de la energía**,
 
 ---
 
-## 📐 Fase 3 · Arquitectura de Matplotlib
-
-Matplotlib nació en 2003: **John D. Hunter**, neurobiólogo, necesitaba graficar señales de electrocorticografía en Python con una sintaxis familiar para quien venía de MATLAB. Esa herencia explica su diseño actual, organizado en tres capas que se pueden usar por separado.
-
-<div align="center">
-    <img src="public/assets/images/figures/python/architecture/linea_tiempo_matplotlib.png" width="880" alt="Línea de tiempo de Matplotlib">
-</div>
-
-<div align="center">
-    <img src="public/assets/images/figures/python/architecture/arquitectura_capas.png" width="880" alt="Arquitectura en capas de Matplotlib">
-</div>
-
-**Las tres capas** — el diagrama anterior está dibujado únicamente con objetos `Artist` (`FancyBboxPatch`, `FancyArrowPatch` y `Text`): es a la vez la explicación y la demostración de la capa intermedia.
-
-| | |
-|---|---|
-| ![Anatomía de una figura](public/assets/images/figures/python/architecture/anatomia_figura.png) | ![Scripting frente a artistas](public/assets/images/figures/python/architecture/capas_scripting_vs_artist.png) |
-| **Anatomía de una figura** — nombrar bien cada componente (Figure, Axes, Axis, Line2D, spines, ticks, legend) es lo que permite etiquetar con precisión y leer la documentación sin tropiezos | **Dos caminos, un mismo gráfico** — a la izquierda `pyplot` con su estado global; a la derecha, las mismas barras armadas como objetos `Rectangle` y `Text`. Son idénticos porque el primero termina haciendo lo del segundo |
-
-**La capa de backend, medida:** la misma figura exportada con tres backends distintos.
-
-| Formato | Backend | Tipo | Tiempo (ms) | Peso (KB) |
-|---|---|---|---|---|
-| PNG | Agg (Anti-Grain Geometry) | Rasterizado a 150 ppp | 34,8 | 26,2 |
-| SVG | SVG | Vectorial, texto editable | 25,3 | 36,7 |
-| PDF | PDF | Vectorial, listo para imprimir | 38,1 | 19,2 |
-
-El laboratorio entrega **PNG** porque se incrusta sin fricción en el informe y en este README; SVG y PDF serían preferibles si las figuras tuvieran que ampliarse o editarse después.
-
----
-
 ## 🖼️ Galería de Figuras
 
 ### Distribución de frecuencias y tendencia central (Python · Matplotlib)
@@ -240,7 +220,7 @@ El laboratorio entrega **PNG** porque se incrusta sin fricción en el informe y 
     <img src="public/assets/images/figures/python/statistics/freq_polygon_ogive.png" width="820" alt="Polígono de frecuencias y ojiva">
 </div>
 
-**Polígono de frecuencias y ojiva** — dos lecturas de la misma tabla: la puntual (marca de clase vs. fi) y la acumulada (límite superior vs. Hi %), donde el corte con el 50 % localiza gráficamente la mediana.
+**Polígono de frecuencias y ojiva** — dos lecturas de la misma tabla: la puntual (marca de clase vs. fi) y la acumulada (límite superior vs. Hi %), donde el corte con el 50 % localiza gráficamente la mediana. Son las dos únicas figuras con cuadrícula en ambos ejes, porque aquí el eje X sí es continuo.
 
 ### Dispersión y comparación entre sectores (Python · Matplotlib)
 
@@ -251,46 +231,38 @@ El laboratorio entrega **PNG** porque se incrusta sin fricción en el informe y 
 
 ### Réplica en R (graficación base)
 
-Las cinco figuras de Matplotlib tienen su equivalente en graficación base de R, construidas sobre estadísticos recalculados de forma independiente.
+R recalcula todos los estadísticos de forma independiente y replica las dos figuras que sostienen el análisis. La cuadrícula se traza en **dos pasadas** —marco sin relleno, cuadrícula, barras encima— porque la graficación base no tiene un equivalente a `axisbelow`.
 
 | | |
 |---|---|
-| ![Histograma en R](public/assets/images/figures/r/statistics/hist_sturges_central_tendency.png) | ![Barras de frecuencia en R](public/assets/images/figures/r/statistics/bar_freq_by_sector.png) |
-| **Histograma de Sturges** — mismas 8 clases y mismas medidas de posición | **Frecuencia por sector** — n (%) sobre cada barra |
-| ![Media y mediana en R](public/assets/images/figures/r/statistics/bar_mean_median_by_sector.png) | ![Boxplot en R](public/assets/images/figures/r/statistics/boxplot_dispersion_by_sector.png) |
-| **Media vs. mediana** — `barplot(beside = TRUE)` sobre `tapply` | **Dispersión por sector** — caja, media y σ |
-
-<div align="center">
-    <img src="public/assets/images/figures/r/statistics/freq_polygon_ogive.png" width="820" alt="Polígono de frecuencias y ojiva en R">
-</div>
-
-**Polígono de frecuencias y ojiva en R** — dos paneles con `par(mfrow = c(1, 2))`; la misma lectura puntual y acumulada de la tabla de frecuencias recalculada con `hist(..., plot = FALSE)$counts`.
+| ![Histograma en R](public/assets/images/figures/r/statistics/hist_sturges_central_tendency.png) | ![Boxplot en R](public/assets/images/figures/r/statistics/boxplot_dispersion_by_sector.png) |
+| **Histograma de Sturges** — mismas 8 clases y mismas medidas de posición | **Dispersión por sector** — caja, media y σ |
 
 ---
 
 ## ⚖️ Comparación de Herramientas de Visualización
 
-Las seis herramientas dibujan **el mismo gráfico**: consumo medio por sector, con título, ejes rotulados, etiquetas de dato y la misma paleta, a 975 × 555 px.
+Las seis herramientas dibujan **el mismo gráfico**: consumo medio por sector, con título, ejes rotulados, etiquetas de dato, cuadrícula sutil y la misma paleta, a 975 × 555 px. Fijar la especificación es lo que permite atribuir las diferencias a la herramienta y no al gráfico.
 
 | | |
 |---|---|
 | ![Matplotlib](public/assets/images/figures/python/tools/bar_matplotlib.png) | ![pandas.plot](public/assets/images/figures/python/tools/bar_pandas.png) |
 | **Matplotlib** — cada elemento se declara explícitamente | **pandas.plot** — el gráfico sale del propio DataFrame |
 | ![seaborn](public/assets/images/figures/python/tools/bar_seaborn.png) | ![Plotly](public/assets/images/figures/python/tools/bar_plotly.png) |
-| **seaborn** — agrega la media por sector sin que se le pida | **Plotly** — otros valores por defecto: sin cuadrícula y etiquetas dentro de la barra |
+| **seaborn** — agrega la media por sector sin que se le pida | **Plotly** — mete las etiquetas dentro de la barra y necesita declarar la cuadrícula a mano |
 | ![R base](public/assets/images/figures/r/tools/bar_r_base.png) | ![ggplot2](public/assets/images/figures/r/tools/bar_r_ggplot2.png) |
-| **R base** — dibujo por pasos sobre un dispositivo abierto | **ggplot2** — el gráfico se declara como suma de capas |
+| **R base** — dibujo por pasos; la cuadrícula cuesta una pasada extra | **ggplot2** — el gráfico se declara como suma de capas |
 
 ### Resultados medidos
 
 | Ecosistema | Herramienta | Versión | Paradigma | Motor de render | Interactivo | Líneas | Tiempo (ms) | Peso (KB) |
 |---|---|---|---|---|---|---|---|---|
-| Python | **Matplotlib** | 3.11.1 | Imperativa (orientada a objetos) | Agg / propio | No | 10 | 75,9 | 29,5 |
-| Python | pandas.plot | 3.0.5 | Imperativa (método del DataFrame) | Matplotlib | No | 9 | 77,7 | 29,2 |
-| Python | seaborn | 0.13.2 | Declarativa (gramática estadística) | Matplotlib | No | 9 | 83,6 | 27,0 |
-| Python | Plotly | 6.9.0 | Declarativa (Plotly Express) | JavaScript (D3) / Kaleido | **Sí** | **6** | 1 573,5 | 25,9 |
-| R | R base (graphics) | 4.6.1 | Imperativa (dibujo por pasos) | grDevices / Cairo | No | 7 | **12,0** | 10,5 |
-| R | ggplot2 | 4.0.3 | Declarativa (gramática de gráficos) | grid / Cairo | No | 12 | 146,0 | 10,1 |
+| Python | **Matplotlib** | 3.11.1 | Imperativa (orientada a objetos) | Agg / propio | No | 10 | 78,2 | 29,4 |
+| Python | pandas.plot | 3.0.5 | Imperativa (método del DataFrame) | Matplotlib | No | 9 | 82,9 | 29,6 |
+| Python | seaborn | 0.13.2 | Declarativa (gramática estadística) | Matplotlib | No | 9 | 84,3 | 27,2 |
+| Python | Plotly | 6.9.0 | Declarativa (Plotly Express) | JavaScript (D3) / Kaleido | **Sí** | **7** | 1 807,7 | 26,5 |
+| R | R base (graphics) | 4.6.1 | Imperativa (dibujo por pasos) | grDevices / Cairo | No | 8 | **12,4** | 11,1 |
+| R | ggplot2 | 4.0.3 | Declarativa (gramática de gráficos) | grid / Cairo | No | 13 | 153,2 | 8,8 |
 
 <div align="center">
     <img src="public/assets/images/figures/python/tools/comparativa_consolidada.png" width="900" alt="Comparativa consolidada de las seis herramientas">
@@ -300,19 +272,20 @@ Las seis herramientas dibujan **el mismo gráfico**: consumo medio por sector, c
 
 ### Lectura de los resultados
 
-- **Brevedad y velocidad no van juntas.** Plotly escribe el gráfico en **6 líneas** pero tarda **1 574 ms** en exportarlo a PNG: su motor real es JavaScript y necesita un navegador (Kaleido) para producir una imagen estática. Es **21 veces más lento** que Matplotlib para el mismo resultado.
-- **pandas y seaborn no son alternativas a Matplotlib, son fachadas suyas.** Ambos renderizan *con* Matplotlib; su ventaja es escribir menos, y su costo, un tiempo ligeramente mayor y menos control sobre el detalle fino.
-- **R base es el más rápido de los seis** (12 ms) y produce archivos tres veces más livianos, pero cada elemento —cuadrícula, etiquetas, límites— se ajusta a mano, y eso no aparece en el conteo de líneas de un gráfico sencillo.
+- **Brevedad y velocidad no van juntas.** Plotly escribe el gráfico en **7 líneas** —las menos de las seis— pero tarda **1 808 ms** en exportarlo a PNG: su motor real es JavaScript y necesita un navegador (Kaleido) para producir una imagen estática. Es **23 veces más lento** que Matplotlib para el mismo resultado.
+- **pandas y seaborn no son alternativas a Matplotlib, son fachadas suyas.** Ambos renderizan *con* Matplotlib; su ventaja es escribir menos, y su costo, un tiempo ligeramente mayor y menos control sobre el detalle fino. Se nota en la cuadrícula: la heredan gratis de los `rcParams`, mientras que Plotly y R base tienen que declararla.
+- **R base es el más rápido de los seis** (12,4 ms) y produce archivos casi tres veces más livianos, pero cada elemento —cuadrícula, etiquetas, límites— se ajusta a mano; de hecho es la única herramienta que necesita dibujar el gráfico dos veces para que la cuadrícula quede detrás de los datos.
 - **La interactividad es la única ventaja que no se mide en segundos.** Plotly es el único que entrega un gráfico navegable ([`bar_plotly_interactivo.html`](public/assets/images/figures/python/tools/bar_plotly_interactivo.html)), y ese, no la brevedad, es su argumento frente a Matplotlib.
 
 ### Justificación de la elección
 
 Este laboratorio produce **figuras estáticas de alta densidad informativa para un informe impreso**, y bajo ese requisito se eligió **Matplotlib**:
 
-1. **Control total sobre la anotación.** Superponer media, mediana y moda en un histograma, o rotular σ sobre un diagrama de caja, exige alcanzar artistas individuales. Las fachadas declarativas facilitan el gráfico típico y estorban en el atípico.
-2. **Costo bajo y predecible.** 76 ms por figura y ningún motor externo; Plotly requiere un navegador instalado, lo que rompe la reproducibilidad del laboratorio.
-3. **Es el sustrato común.** Elegir Matplotlib no descarta pandas ni seaborn: ambos siguen disponibles porque terminan devolviendo un objeto `Axes` que se puede seguir refinando con la API de Matplotlib.
-4. **Paridad con R.** La graficación base de R replica cualquier figura de Matplotlib sin dependencias adicionales, lo que hace posible la verificación cruzada.
+1. **Control total sobre la anotación.** Superponer media, mediana y moda en un histograma, o rotular σ sobre un diagrama de caja, exige alcanzar artistas individuales. Las fachadas declarativas facilitan el gráfico típico y estorban en el atípico, y casi todas las figuras de este laboratorio son atípicas.
+2. **Costo bajo y predecible.** 78 ms por figura y ningún motor externo; Plotly requiere un navegador instalado, lo que rompe la reproducibilidad del laboratorio.
+3. **Una capa de estilo reutilizable.** Un único bloque de `rcParams` impone los principios de visualización a todas las figuras a la vez —y de paso a las de pandas y seaborn—, en lugar de repetir los ajustes gráfico por gráfico.
+4. **Es el sustrato común.** Elegir Matplotlib no descarta pandas ni seaborn: ambos siguen disponibles porque terminan devolviendo un objeto `Axes` que se puede seguir refinando con la API de Matplotlib.
+5. **Paridad con R.** La graficación base de R replica cualquier figura de Matplotlib sin dependencias adicionales, lo que hace posible la verificación cruzada.
 
 Las herramientas descartadas **no son peores, son para otro problema**: Plotly gana en tableros web, seaborn en exploración estadística rápida y ggplot2 en composiciones por capas dentro de R. Fuera del código, **Power BI y Tableau** resolverían la distribución del resultado a usuarios de negocio, pero no la reproducibilidad ni el control de versiones que exige un laboratorio académico.
 
@@ -348,13 +321,13 @@ La primera clase concentra el **54,2 %** de los clientes y el 76,7 % acumulado e
 - **Asimetría positiva marcada a nivel global:** la moda interpolada (409,6) y la mediana (378,6) caen ambas dentro de la primera clase, mientras la media (819,1) se desplaza hacia la cola derecha. El coeficiente de asimetría (**1,85**) pone número a lo que el histograma muestra: la media global **no representa a ningún cliente típico**; la mediana es el resumen honesto.
 - **La heterogeneidad es entre sectores, no dentro de ellos:** el CV global (**106,7 %**) cuadruplica el de cualquier sector individual (23,6 %–25,9 %). Lo que dispara la dispersión total es la diferencia de **escala** entre grupos (248 → 878 → 2 654 kWh), no la variabilidad interna.
 - **Simetría local:** dentro de cada sector la media y la mediana difieren menos del 4 %, y sus asimetrías son casi nulas (0,63, 0,02 y 0,14), coherente con la generación normal por grupo.
-- **Verificación cruzada:** Python y R producen las mismas 8 clases, las mismas frecuencias y los mismos estadísticos **dígito a dígito**.
+- **Verificación cruzada:** Python y R producen las mismas 8 clases, las mismas frecuencias y los mismos estadísticos **dígito a dígito**, incluidas asimetría y curtosis.
 
 ---
 
 ## 🔑 Palabras Clave
 
-`Visualización de Datos` · `Matplotlib` · `Arquitectura en Capas` · `pandas` · `seaborn` · `Plotly` · `ggplot2` · `R` · `Estadística Descriptiva` · `Regla de Sturges` · `Comparación de Herramientas` · `Ciencia de Datos` · `Python`
+`Visualización de Datos` · `Matplotlib` · `pandas` · `seaborn` · `Plotly` · `ggplot2` · `R` · `Estadística Descriptiva` · `Regla de Sturges` · `Comparación de Herramientas` · `Principios de Visualización` · `Ciencia de Datos` · `Python`
 
 ---
 

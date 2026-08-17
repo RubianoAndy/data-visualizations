@@ -196,10 +196,14 @@ fig.tight_layout()
 fig.savefig(FIGURES_DIR / "freq_polygon_ogive.png")
 plt.close(fig)
 
-"""Barras de frecuencia absoluta por sector: distribución de la variable
-nominal, ordenada por magnitud y con etiquetas n (%)."""
-sector_freq = df["sector"].value_counts().sort_values()
-fig, ax = plt.subplots(figsize=(6.5, 3.2))
+"""Barras de frecuencia absoluta por sector con etiquetas n (%).
+
+Los sectores se ordenan por escala de consumo, no por frecuencia, para que
+todas las figuras del informe presenten las categorías en el mismo orden y
+puedan leerse en paralelo."""
+sector_order = ["Residencial", "Comercial", "Industrial"]
+sector_freq = df["sector"].value_counts().loc[sector_order]
+fig, ax = plt.subplots(figsize=(6.5, 3.6))
 bars = ax.bar(sector_freq.index, sector_freq.values,
               color=["#a6bddb", "#74a9cf", "#2b8cbe"])
 ax.bar_label(bars, labels=[f"{v} ({v/n:.0%})" for v in sector_freq.values], padding=3)
@@ -214,7 +218,6 @@ plt.close(fig)
 
 """Barras agrupadas media vs mediana por sector: la cercanía de ambas
 dentro de cada grupo evidencia simetría local pese a la asimetría global."""
-sector_order = ["Residencial", "Comercial", "Industrial"]
 central_plot = central.set_index("grupo").loc[sector_order]
 pos = np.arange(len(sector_order))
 width = 0.38
@@ -246,9 +249,12 @@ for patch, c in zip(bp["boxes"], ["#a6bddb", "#74a9cf", "#2b8cbe"]):
 sigma = dispersion.set_index("grupo").loc[sector_order, "desv_std"]
 means = central.set_index("grupo").loc[sector_order, "media"]
 ax.scatter(pos + 1, means, color="#d95f02", zorder=3, s=30, label="Media")
+# La sigma se rotula por encima de cada caja para no taparla.
+tope = [serie.max() for serie in data]
 for i, s in enumerate(sector_order):
-    ax.annotate(f"σ = {sigma[s]:,.0f}", (i + 1, means[s]),
-                xytext=(8, -4), textcoords="offset points", fontsize=8)
+    ax.annotate(f"σ = {sigma[s]:,.0f}", (i + 1, tope[i]), ha="center",
+                xytext=(0, 6), textcoords="offset points", fontsize=8)
+ax.set_ylim(0, max(tope) * 1.15)
 ax.set_title("Dispersión del consumo por sector (mediana, IQR, media y σ)")
 ax.set_xlabel("Sector")
 ax.set_ylabel("Consumo (kWh/mes)")
