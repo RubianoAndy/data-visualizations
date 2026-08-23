@@ -14,17 +14,65 @@
 #' "dibujar detras de los datos" equivalente a axisbelow.
 #'
 #' Escribe las imagenes en public/assets/images/figures/r/statistics/.
+#'
+#' Las rutas se resuelven desde la ubicacion de este archivo, no desde el
+#' directorio de trabajo, de modo que las salidas caen siempre dentro de este
+#' proyecto aunque la sesion de RStudio apunte a otro.
 
-#' Rutas del proyecto (ejecutar desde la raiz del proyecto).
-data_path <- "data/dataset/consumo_energia.csv"
-figures_dir <- file.path("public", "assets", "images", "figures", "r",
-                         "statistics")
+#' 0. RESOLUCION DE RUTAS.
+#'
+#' R no expone un equivalente de __file__: con rutas relativas manda getwd(),
+#' asi que una sesion abierta sobre otro proyecto escribe alli las figuras.
+#' script_path() recupera la ruta real del archivo en los tres modos de
+#' ejecucion: Rscript (argumento --file=), source() (variable ofile del marco
+#' que hace la llamada) y el boton Source/Run de RStudio (rstudioapi).
+script_path <- function() {
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", args, value = TRUE)
+  if (length(file_arg) > 0) {
+    return(normalizePath(sub("^--file=", "", file_arg[1]), mustWork = FALSE))
+  }
+  for (i in seq_len(sys.nframe())) {
+    ofile <- sys.frame(i)$ofile
+    if (!is.null(ofile)) {
+      return(normalizePath(ofile, mustWork = FALSE))
+    }
+  }
+  if (requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::isAvailable()) {
+    contexto <- rstudioapi::getSourceEditorContext()
+    if (!is.null(contexto) && nzchar(contexto$path)) {
+      return(normalizePath(contexto$path, mustWork = FALSE))
+    }
+  }
+  NULL
+}
+
+this_file <- script_path()
+project_root <- if (is.null(this_file)) {
+  normalizePath(getwd(), mustWork = FALSE)
+} else {
+  # utils/codes/descriptive_stats.R -> utils/codes -> utils -> raiz del proyecto
+  dirname(dirname(dirname(this_file)))
+}
+
+data_path <- file.path(project_root, "data", "dataset", "consumo_energia.csv")
+figures_dir <- file.path(project_root, "public", "assets", "images", "figures",
+                         "r", "statistics")
+
+#' Verificar el dataset antes de crear nada: si la raiz deducida fuera la
+#' equivocada, el script se detiene en vez de sembrar carpetas y figuras en
+#' otro proyecto.
+if (!file.exists(data_path)) {
+  stop(sprintf(paste0("No se encontro el dataset en '%s'. Ejecuta antes: ",
+                      "python utils/codes/exploration.py"),
+               data_path))
+}
 if (!dir.exists(figures_dir)) {
   dir.create(figures_dir, recursive = TRUE)
 }
-if (!file.exists(data_path)) {
-  stop("No se encontro el dataset. Ejecuta antes: python utils/codes/exploration.py")
-}
+
+cat(sprintf("Raiz del proyecto: %s\n", project_root))
 
 #' Carga de datos y vista rapida de su estructura.
 df <- read.csv(data_path)

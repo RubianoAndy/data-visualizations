@@ -9,7 +9,11 @@
 #' y el mismo tamano, para que la diferencia sea atribuible a la libreria.
 #'
 #' Escribe data/processed/comparativa_herramientas_r.csv y las figuras en
-#' public/assets/images/figures/r/tools/. Ejecutar desde la raiz del proyecto.
+#' public/assets/images/figures/r/tools/.
+#'
+#' Las rutas se resuelven desde la ubicacion de este archivo, no desde el
+#' directorio de trabajo, de modo que las salidas caen siempre dentro de este
+#' proyecto aunque la sesion de RStudio apunte a otro.
 
 #' keep.source permite contar las lineas reales de cada funcion, igual que
 #' inspect.getsource() en la version de Python.
@@ -20,15 +24,61 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
 }
 library(ggplot2)
 
-data_path <- "data/dataset/consumo_energia.csv"
-processed_dir <- file.path("data", "processed")
-figures_dir <- file.path("public", "assets", "images", "figures", "r", "tools")
+#' 0. RESOLUCION DE RUTAS.
+#'
+#' R no expone un equivalente de __file__: con rutas relativas manda getwd(),
+#' asi que una sesion abierta sobre otro proyecto escribe alli las figuras.
+#' script_path() recupera la ruta real del archivo en los tres modos de
+#' ejecucion: Rscript (argumento --file=), source() (variable ofile del marco
+#' que hace la llamada) y el boton Source/Run de RStudio (rstudioapi).
+script_path <- function() {
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", args, value = TRUE)
+  if (length(file_arg) > 0) {
+    return(normalizePath(sub("^--file=", "", file_arg[1]), mustWork = FALSE))
+  }
+  for (i in seq_len(sys.nframe())) {
+    ofile <- sys.frame(i)$ofile
+    if (!is.null(ofile)) {
+      return(normalizePath(ofile, mustWork = FALSE))
+    }
+  }
+  if (requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::isAvailable()) {
+    contexto <- rstudioapi::getSourceEditorContext()
+    if (!is.null(contexto) && nzchar(contexto$path)) {
+      return(normalizePath(contexto$path, mustWork = FALSE))
+    }
+  }
+  NULL
+}
+
+this_file <- script_path()
+project_root <- if (is.null(this_file)) {
+  normalizePath(getwd(), mustWork = FALSE)
+} else {
+  # utils/codes/benchmark.R -> utils/codes -> utils -> raiz del proyecto
+  dirname(dirname(dirname(this_file)))
+}
+
+data_path <- file.path(project_root, "data", "dataset", "consumo_energia.csv")
+processed_dir <- file.path(project_root, "data", "processed")
+figures_dir <- file.path(project_root, "public", "assets", "images", "figures",
+                         "r", "tools")
+
+#' Verificar el dataset antes de crear nada: si la raiz deducida fuera la
+#' equivocada, el script se detiene en vez de sembrar carpetas y figuras en
+#' otro proyecto.
+if (!file.exists(data_path)) {
+  stop(sprintf(paste0("No se encontro el dataset en '%s'. Ejecuta antes: ",
+                      "python utils/codes/exploration.py"),
+               data_path))
+}
 for (d in c(processed_dir, figures_dir)) {
   if (!dir.exists(d)) dir.create(d, recursive = TRUE)
 }
-if (!file.exists(data_path)) {
-  stop("No se encontro el dataset. Ejecuta antes: python utils/codes/exploration.py")
-}
+
+cat(sprintf("Raiz del proyecto: %s\n", project_root))
 
 df <- read.csv(data_path)
 orden <- c("Residencial", "Comercial", "Industrial")
@@ -79,8 +129,21 @@ render_ggplot <- function(salida) {
 
 #' Cuenta las lineas de codigo del cuerpo, sin la firma, la llave de cierre,
 #' los comentarios ni las lineas en blanco.
+#'
+#' Depende de que la funcion conserve su srcref. El options(keep.source) del
+#' encabezado basta con Rscript y en RStudio, que evaluan expresion por
+#' expresion, pero no con source() en una sesion no interactiva: ahi el archivo
+#' se parsea entero antes de ejecutar nada, con keep.source = FALSE, y los
+#' srcref se pierden. Sin esta comprobacion la medicion devolveria 0 en
+#' silencio, que es peor que detenerse.
 lineas_efectivas <- function(f) {
-  src <- trimws(as.character(attr(f, "srcref")))
+  refs <- attr(f, "srcref")
+  if (is.null(refs)) {
+    stop(paste("No hay srcref: no se pueden contar las lineas de codigo.",
+               "Ejecuta 'Rscript utils/codes/benchmark.R' o, si usas source(),",
+               "pasa source(..., keep.source = TRUE)."))
+  }
+  src <- trimws(as.character(refs))
   src <- src[-c(1, length(src))]
   sum(nchar(src) > 0 & !startsWith(src, "#"))
 }
