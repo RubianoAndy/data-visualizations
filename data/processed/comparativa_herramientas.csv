@@ -1,5 +1,5 @@
 herramienta,version,paradigma,motor_render,interactivo,loc,tiempo_ms,peso_kb,observacion
-Matplotlib,3.11.1,Imperativa (orientada a objetos),Agg / propio,No (imagen estática),10,71.6,29.4,Control absoluto de cada artista; es el motor sobre el que corren las demás
-pandas.plot,3.0.5,Imperativa (método del DataFrame),Matplotlib,No (imagen estática),9,74.9,29.6,"Atajo para explorar: grafica directo desde el DataFrame, hereda sus límites"
-seaborn,0.13.2,Declarativa (gramática estadística),Matplotlib,No (imagen estática),9,81.3,27.2,Agrega y estiliza por ti; ideal para gráficos estadísticos frecuentes
-Plotly,6.9.0,Declarativa (Plotly Express),JavaScript (D3) / Kaleido,"Sí (zoom, tooltip, HTML)",7,1465.6,26.5,Pensado para la web; exportar a imagen exige un motor externo (Kaleido)
+Matplotlib,3.11.1,Imperativa (orientada a objetos),Agg / propio,No (imagen estática),10,77.9,29.4,Control absoluto de cada artista; es el motor sobre el que corren las demás
+pandas.plot,3.0.5,Imperativa (método del DataFrame),Matplotlib,No (imagen estática),9,77.5,29.6,"Atajo para explorar: grafica directo desde el DataFrame, hereda sus límites"
+seaborn,0.13.2,Declarativa (gramática estadística),Matplotlib,No (imagen estática),9,83.3,27.2,Agrega y estiliza por ti; ideal para gráficos estadísticos frecuentes
+Plotly,6.9.0,Declarativa (Plotly Express),JavaScript (D3) / Kaleido,"Sí (zoom, tooltip, HTML)",7,1555.3,26.5,Pensado para la web; exportar a imagen exige un motor externo (Kaleido)
