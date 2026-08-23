@@ -257,12 +257,12 @@ Las seis herramientas dibujan **el mismo gráfico**: consumo medio por sector, c
 
 | Ecosistema | Herramienta | Versión | Paradigma | Motor de render | Interactivo | Líneas | Tiempo (ms) | Peso (KB) |
 |---|---|---|---|---|---|---|---|---|
-| Python | **Matplotlib** | 3.11.1 | Imperativa (orientada a objetos) | Agg / propio | No | 10 | 78,2 | 29,4 |
-| Python | pandas.plot | 3.0.5 | Imperativa (método del DataFrame) | Matplotlib | No | 9 | 82,9 | 29,6 |
-| Python | seaborn | 0.13.2 | Declarativa (gramática estadística) | Matplotlib | No | 9 | 84,3 | 27,2 |
-| Python | Plotly | 6.9.0 | Declarativa (Plotly Express) | JavaScript (D3) / Kaleido | **Sí** | **7** | 1 807,7 | 26,5 |
-| R | R base (graphics) | 4.6.1 | Imperativa (dibujo por pasos) | grDevices / Cairo | No | 8 | **12,4** | 11,1 |
-| R | ggplot2 | 4.0.3 | Declarativa (gramática de gráficos) | grid / Cairo | No | 13 | 153,2 | 8,8 |
+| Python | **Matplotlib** | 3.11.1 | Imperativa (orientada a objetos) | Agg / propio | No | 10 | 77,9 | 29,4 |
+| Python | pandas.plot | 3.0.5 | Imperativa (método del DataFrame) | Matplotlib | No | 9 | 77,5 | 29,6 |
+| Python | seaborn | 0.13.2 | Declarativa (gramática estadística) | Matplotlib | No | 9 | 83,3 | 27,2 |
+| Python | Plotly | 6.9.0 | Declarativa (Plotly Express) | JavaScript (D3) / Kaleido | **Sí** | **7** | 1 555,3 | 26,5 |
+| R | R base (graphics) | 4.6.1 | Imperativa (dibujo por pasos) | grDevices / Cairo | No | 8 | **12,8** | 11,1 |
+| R | ggplot2 | 4.0.3 | Declarativa (gramática de gráficos) | grid / Cairo | No | 13 | 153,9 | 8,8 |
 
 <div align="center">
     <img src="public/assets/images/figures/python/tools/comparativa_consolidada.png" width="900" alt="Comparativa consolidada de las seis herramientas">
@@ -272,9 +272,9 @@ Las seis herramientas dibujan **el mismo gráfico**: consumo medio por sector, c
 
 ### Lectura de los resultados
 
-- **Brevedad y velocidad no van juntas.** Plotly escribe el gráfico en **7 líneas** —las menos de las seis— pero tarda **1 808 ms** en exportarlo a PNG: su motor real es JavaScript y necesita un navegador (Kaleido) para producir una imagen estática. Es **23 veces más lento** que Matplotlib para el mismo resultado.
-- **pandas y seaborn no son alternativas a Matplotlib, son fachadas suyas.** Ambos renderizan *con* Matplotlib; su ventaja es escribir menos, y su costo, un tiempo ligeramente mayor y menos control sobre el detalle fino. Se nota en la cuadrícula: la heredan gratis de los `rcParams`, mientras que Plotly y R base tienen que declararla.
-- **R base es el más rápido de los seis** (12,4 ms) y produce archivos casi tres veces más livianos, pero cada elemento —cuadrícula, etiquetas, límites— se ajusta a mano; de hecho es la única herramienta que necesita dibujar el gráfico dos veces para que la cuadrícula quede detrás de los datos.
+- **Brevedad y velocidad no van juntas.** Plotly escribe el gráfico en **7 líneas** —las menos de las seis— pero tarda **1 555 ms** en exportarlo a PNG: su motor real es JavaScript y necesita un navegador (Kaleido) para producir una imagen estática. Es **20 veces más lento** que Matplotlib para el mismo resultado.
+- **pandas y seaborn no son alternativas a Matplotlib, son fachadas suyas.** Ambos renderizan *con* Matplotlib; sus tiempos son en la práctica los de Matplotlib (77,5 y 83,3 ms frente a 77,9 ms), así que su ventaja es escribir menos y su costo es menos control sobre el detalle fino, no velocidad. Se nota en la cuadrícula: la heredan gratis de los `rcParams`, mientras que Plotly y R base tienen que declararla.
+- **R base es el más rápido de los seis** (12,8 ms) y produce archivos casi tres veces más livianos, pero cada elemento —cuadrícula, etiquetas, límites— se ajusta a mano; de hecho es la única herramienta que necesita dibujar el gráfico dos veces para que la cuadrícula quede detrás de los datos.
 - **La interactividad es la única ventaja que no se mide en segundos.** Plotly es el único que entrega un gráfico navegable ([`bar_plotly_interactivo.html`](public/assets/images/figures/python/tools/bar_plotly_interactivo.html)), y ese, no la brevedad, es su argumento frente a Matplotlib.
 
 ### Justificación de la elección
