@@ -173,8 +173,8 @@ cat("Moda del sector (variable nominal):",
 #' La primera pasada traza un histograma sin relleno para fijar ejes y escala,
 #' la cuadricula se inserta detras y la segunda pasada dibuja las barras encima.
 png(file.path(figures_dir, "hist_sturges_central_tendency.png"),
-    width = 1950, height = 1140, res = 300, type = "cairo")
-par(mar = c(4, 4.5, 3, 1), las = 1)
+    width = 1950, height = 1140, res = 300, pointsize = 10, type = "cairo")
+par(mar = c(4, 4.5, 3, 1), las = 1, cex.main = 1.1)
 hist(x, breaks = edges, border = NA, col = NA, include.lowest = TRUE,
      main = sprintf("Distribución de frecuencias del consumo (R, %d clases)", k),
      xlab = "Consumo (kWh/mes)", ylab = "Frecuencia absoluta (clientes)")
@@ -184,7 +184,7 @@ hist(x, breaks = edges, col = "#2c7fb8", border = "white",
 global_mode <- interpolated_mode(x, edges)
 abline(v = c(global_mode, median(x), mean(x)),
        col = "#d95f02", lty = c(3, 2, 1), lwd = 1.4)
-legend("topright", cex = 0.75, col = "#d95f02", lty = c(3, 2, 1), lwd = 1.4,
+legend("topright", cex = 0.8, col = "#d95f02", lty = c(3, 2, 1), lwd = 1.4,
        legend = c(sprintf("Moda = %.0f", global_mode),
                   sprintf("Mediana = %.0f", median(x)),
                   sprintf("Media = %.0f", mean(x))))
@@ -193,8 +193,8 @@ dev.off()
 #' Diagrama de caja por sector con la media y la desviacion estandar
 #' superpuestas, tambien en dos pasadas.
 png(file.path(figures_dir, "boxplot_dispersion_by_sector.png"),
-    width = 1950, height = 1140, res = 300, type = "cairo")
-par(mar = c(4, 4.5, 3, 1), las = 1)
+    width = 1950, height = 1140, res = 300, pointsize = 10, type = "cairo")
+par(mar = c(4, 4.5, 3, 1), las = 1, cex.main = 1.1)
 boxplot(consumo_kwh ~ sector, data = df, border = NA, ylim = c(0, max(x) * 1.15),
         main = "Dispersión del consumo por sector (R)",
         xlab = "Sector", ylab = "Consumo (kWh/mes)")
@@ -205,8 +205,8 @@ group_means <- tapply(x, df$sector, mean)
 group_sd <- tapply(x, df$sector, sd)
 points(seq_along(sector_order), group_means, col = "#d95f02", pch = 19)
 text(seq_along(sector_order), tapply(x, df$sector, max) + max(x) * 0.05,
-     labels = sprintf("sigma = %.0f", group_sd), cex = 0.75)
-legend("topleft", cex = 0.75, bty = "n", col = "#d95f02", pch = 19,
+     labels = sprintf("σ = %.0f", group_sd), cex = 0.8)
+legend("topleft", cex = 0.8, bty = "n", col = "#d95f02", pch = 19,
        legend = "Media")
 dev.off()
 
